@@ -10,7 +10,7 @@ int t[MAX_N][MAX_N];
 
 int N,K,S;
 int x[MAX_N],y[MAX_N],z[MAX_N];
-
+/*
 bool incheck(int id,int px,int py,int pz){
   if(x[id]<=px && px<x[id]+S)
     if(y[id]<=py && py<y[id]+S)
@@ -18,7 +18,7 @@ bool incheck(int id,int px,int py,int pz){
         return true;
   return false;
 }
-
+*/
 int calc(int a,int b){
   assert(a!=b);
   int ax=x[a],ay=y[a],az=z[a];
