@@ -10,6 +10,7 @@ int x[105],y[105];
 int r[3005],s[3005],t[3005];
 int C[1005];
 
+//行列のほとんどの要素が0であるため、gaussjordanではなくJacobi法で求めた
 vec Jacobi(mat &A,vec &B){
   int N=A.size();
   vec now=B,next;
