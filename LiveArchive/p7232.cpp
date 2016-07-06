@@ -15,7 +15,7 @@ int ccw(P a,P b,P c){
   if(k.imag() > 0)return 1;
   if(k.imag() < 0)return -1;
   if(k.real() < 0)return 2;
-  if(norm(b) > norm(c))return -2;
+  if(norm(b) < norm(c))return -2;
   return 0;
 }
   
