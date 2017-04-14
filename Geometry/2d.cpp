@@ -144,7 +144,7 @@ vecP andrewScan(vecP &t){
   return res;
 }
  
-vecP ConvexHull(vecP &t){
+vecP convexHull(vecP &t){
   sort(t.begin(),t.end());
   vecP u=andrewScan(t);
   reverse(t.begin(),t.end());
@@ -171,7 +171,15 @@ double maxDist(vecP &t){
   int N=u.size(),K=0;
   double res=0;
   for(int i=0;i<N;i++){
-    while(abs(u[i]-u[K])<abs(u[i]-u[(K+1)%N]))K=(K+1)%N;
+    P a=u[i], b=u[ (i+1)%N ];
+    while(1){
+      P c=u[K], d=u[ (K+1)%N ];
+      if(distSP(S(a,b),c)<distSP(S(a,b),d) ){
+        K=(K+1)%N;
+        res=max(res,abs(a-c));
+        res=max(res,abs(a-d));
+      }else break;
+    }
     res=max(res,abs(u[i]-u[K]));
   }
   return res;
