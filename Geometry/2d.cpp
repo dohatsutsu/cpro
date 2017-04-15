@@ -65,7 +65,7 @@ P project(P a,P b,P c){
 
 P reflect(P a,P b,P c){
   b-=a,c-=a;
-  return a+b*real(c/b);
+  return a+b*conj(c/b);
 }
 
 int ccw(P a,P b,P c){
