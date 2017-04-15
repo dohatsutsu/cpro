@@ -1,6 +1,7 @@
 #include<bits/stdc++.h>
 using namespace std;
 typedef complex<double> P;
+typedef complex<double> V;
 typedef vector<P> vecP;
 typedef pair<P,P> L;
 typedef pair<P,P> S;
@@ -16,6 +17,11 @@ namespace std{
             a.imag()<b.imag());
   }
 };
+
+V normal(V a){
+  assert( abs(a)>0 );
+  return a/abs(a);
+}
 
 double Sqrt( double x ){
   if(x<0)return 0;
@@ -45,6 +51,12 @@ double cross(P a,P b){
 double getArg(P a,P b){
   return arg(b*conj(a));
 }
+
+double getTime(V a,V b){
+  assert( eq(cross(a,b),0) );
+  return ( dot(a,b) < 0 ? -1.0 : 1.0 ) * abs(b) / abs(a);
+}
+
 
 P project(P a,P b,P c){
   b-=a,c-=a;
@@ -166,25 +178,35 @@ vecP cutConvex(vecP &t,L l){
   return res;
 }
 
-double maxDist(vecP &t){
-  vecP u=t;//ConvexHull(t);
-  int N=u.size(),K=0;
-  double res=0;
-  for(int i=0;i<N;i++){
-    P a=u[i], b=u[ (i+1)%N ];
-    while(1){
-      P c=u[K], d=u[ (K+1)%N ];
-      if(distSP(S(a,b),c)<distSP(S(a,b),d) ){
-        K=(K+1)%N;
-        res=max(res,abs(a-c));
-        res=max(res,abs(a-d));
-      }else break;
-    }
-    res=max(res,abs(u[i]-u[K]));
-  }
-  return res;
+P getVector(const vecP &t, int id){
+  int n=t.size();
+  return t[ (id+1)%n ] - t[id%n];
 }
 
+double convex_diameter(vecP &t) {
+  int n = t.size();
+  int is = 0, js = 0;
+  for (int i = 1; i < n; ++i) {
+    if (imag(t[i]) > imag(t[is])) is = i;
+    if (imag(t[i]) < imag(t[js])) js = i;
+  }
+  double maxd = norm(t[is]-t[js]);
+ 
+  int i, maxi, j, maxj;
+  i = maxi = is;
+  j = maxj = js;
+  do {
+    
+    if (cross( getVector(t,i), getVector(t,j)) >= 0) j = (j+1) % n;
+    
+    else i = (i+1) % n;
+    if (norm(t[i]-t[j]) > maxd) {
+      maxd = norm(t[i]-t[j]);
+      maxi = i; maxj = j;
+    }
+  } while (i != is || j != js);
+  return maxd; /* farthest pair is (maxi, maxj). */
+}
 
 bool compare_y(const P &a,const P &b){
   return a.imag() < b.imag();
@@ -289,10 +311,6 @@ vector<S> getTangent(C a,C b){
   return res;
 }
 
-double getTime(P a,P b){
-  assert( eq(cross(a,b),0) );
-  return ( dot(a,b) < 0 ? -1.0 : 1.0 ) * abs(b);
-}
 
 vecP getCrossCS(C cir,S s, bool debug=false){
   P a=s.first, b=s.second;
@@ -307,7 +325,7 @@ vecP getCrossCS(C cir,S s, bool debug=false){
   
   if(cr+eps<h)return res;
   double w=Sqrt(cr*cr-h*h);
-  double L=getTime(b-a,target-a)-w,  R=L+w*2.0;
+  double L=getTime( normal(b-a) ,target-a)-w,  R=L+w*2.0;
   
   if( -eps<L && L< length+eps )res.push_back(a+base*L);
   if( eq(L,R) )return res;
